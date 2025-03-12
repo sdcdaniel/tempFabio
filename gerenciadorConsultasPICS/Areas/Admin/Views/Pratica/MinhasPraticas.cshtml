@@ -1,0 +1,88 @@
+﻿@model List<gerenciadorConsultasPICS.Areas.Admin.ViewModels.Pratica.MinhasPraticasViewModel>
+@{
+    ViewData["Title"] = "Minhas práticas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="list-container">
+
+    <h1>Minhas práticas</h1>
+
+    <div class="mt-4">
+
+        @if (Model.Count == 0)
+        {
+            <p>A instituição não possui prática vinculada.</p>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="mb-1" style="text-align: start;">@item.nome</p>
+                    <p class="mb-1" style="text-align: start;">@item.textoPeriodicidade</p>
+                    <p class="mb-1" style="text-align: start;">@item.textoQtdSessoes</p>
+                    <p class="mb-1" style="text-align: start;">@item.textoDiaPermitidoParaAgendamento</p>
+                    <button type="button" class="btn" onclick="editarPratica(@item.idPratica)">Editar prática</button>
+                    <button type="button" class="btn-cancelar" onclick="desvincularPratica(@item.idPratica, @item.idInstituicao)">Desvincular prática</button>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <button type="button" class="btn" id="btnVincularPratica">Vincular prática</button>
+
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        function editarPratica(idPratica) {
+            window.location.href = '/Admin/Pratica/EdicaoVinculoPratica?idPratica=' + idPratica;
+        }
+
+        function desvincularPratica(idPratica, idInstituicao) {
+            Swal.fire({
+                title: "Deseja prosseguir com a ação?",
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: 'LightSeaGreen',
+                confirmButtonText: 'Confirmar'
+            }).then((resultado) => {
+                if (resultado.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("DesvincularPratica", "Pratica")',
+                        type: 'DELETE',
+                        data: {
+                            idPratica: idPratica,
+                            idInstituicao: idInstituicao
+                        },
+                        success: function (resposta) {
+                            if (resposta.sucesso) {
+                                Swal.fire({
+                                    title: "Prática desvinculada com sucesso!",
+                                    confirmButtonColor: 'LightSeaGreen',
+                                    icon: "success"
+                                }).then((resultado) => { window.location.reload(true); });
+                            } else {
+                                exibirAlerta(resposta.mensagem);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            exibirAlerta('Erro ao desvincular prática.');
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            configurarBotaoVoltar('@Url.Action("AreaAdministrativaInstituicao", "Login")');
+
+            $('#btnVincularPratica').on('click', function () {
+                window.location.href = '@Url.Action("VinculoPratica", "Pratica")';
+            });
+        });
+    </script>
+}

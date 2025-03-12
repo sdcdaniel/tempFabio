@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/gerenciadorConsultasPICS.styles.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <header>
+        <div id="btn-voltar" onclick="voltarTela()">
+            <svg class="icon" style="width: 2rem; height: 2rem;">
+                <use xlink:href="/images/sprite.svg#arrow-back"></use>
+            </svg>
+        </div>
+    </header>
+
+    <div id="overlay-loading" style="display:none;">
+        <div id="loading">
+            <img src="~/images/loading.gif" alt="Carregando..." />
+        </div>
+    </div>
+
+    <div class="container">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
